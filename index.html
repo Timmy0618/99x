@@ -17,13 +17,27 @@
     <main>
       <div id="app">
         <div class="container overflow-hidden p-5 center">
-          <h1>九九乘法表</h1>
+          <div class="row">
+            <div class="col">
+              <h1>九九乘法表</h1>
+            </div>
+            <div class="col">
+              <button type="button" class="btn btn-outline-primary" @click="tag=!tag">
+                <div v-if="tag">模式1</div>
+                <div v-else>模式2</div>
+              </button>
+            </div>
+          </div>
           <div class="row align-items-center">
             <div class="row">
               <div class="col">
                 <table class="table">
                   <tbody>
-                    <tr v-for="topic,index in result1" class="fs-5">
+                    <tr
+                      v-for="topic,index in result1"
+                      class="fs-5"
+                      style="white-space: pre"
+                    >
                       <th scope="row">{{index+1}}</th>
                       <td>{{topic}}</td>
                     </tr>
@@ -33,7 +47,11 @@
               <div class="col">
                 <table class="table">
                   <tbody>
-                    <tr v-for="topic,index in result2" class="fs-5">
+                    <tr
+                      v-for="topic,index in result2"
+                      class="fs-5"
+                      style="white-space: pre"
+                    >
                       <th scope="row">{{index+31}}</th>
                       <td>{{topic}}</td>
                     </tr>
@@ -43,7 +61,11 @@
               <div class="col">
                 <table class="table">
                   <tbody>
-                    <tr v-for="topic,index in result3" class="fs-5">
+                    <tr
+                      v-for="topic,index in result3"
+                      class="fs-5"
+                      style="white-space: pre"
+                    >
                       <th scope="row">{{index+61}}</th>
                       <td>{{topic}}</td>
                     </tr>
@@ -80,27 +102,48 @@
         result1: [],
         result2: [],
         result3: [],
+        tag: true,
       };
     },
-    methods: {},
-    mounted() {
-      let tmp = [];
-      let max = 100;
-      let min = 0;
-      for (let i = 1; i < max; i++) {
-        tmp[i] = i;
-      }
+    methods: {
+      init() {
+        this.result = [];
+        let tmp = [];
+        let max = 100;
+        let min = 10;
+        for (let i = 10; i < max; i++) {
+          tmp[i] = i;
+        }
 
-      while (tmp.length != 0) {
-        let rand = Math.floor(Math.random() * (max - min) + min);
-        if (tmp[rand] >= 10)
-          this.result.push(`${parseInt(tmp[rand] / 10)} x ${tmp[rand] % 10} =`);
-        tmp.splice(rand, 1);
-        max--;
-      }
-      this.result1 = this.result.slice(0, 30);
-      this.result2 = this.result.slice(30, 60);
-      this.result3 = this.result.slice(60, 90);
+        while (tmp.length != 0) {
+          let rand = Math.floor(Math.random() * (max - min) + min);
+          if (this.tag) this.gen1(tmp, rand);
+          else this.gen2(tmp, rand);
+          tmp.splice(rand, 1);
+          max--;
+        }
+        this.result1 = this.result.slice(0, 30);
+        this.result2 = this.result.slice(30, 60);
+        this.result3 = this.result.slice(60, 90);
+      },
+      gen1(tmp, rand) {
+        this.result.push(`${parseInt(tmp[rand] / 10)} x ${tmp[rand] % 10} =`);
+      },
+      gen2(tmp, rand) {
+        this.result.push(
+          `${parseInt(tmp[rand] / 10)} x (    ) = ${
+            parseInt(tmp[rand] / 10) * (tmp[rand] % 10)
+          }`
+        );
+      },
+    },
+    mounted() {
+      this.init();
+    },
+    watch: {
+      tag() {
+        this.init();
+      },
     },
   });
   vueApp.mount("#app");
